@@ -1,0 +1,18 @@
+#Download data into working directory before executing script#
+rawdata<-read.table("household_power_consumption.txt", header = TRUE, sep = ";", na.strings = "?")
+subset<-subset(rawdata, Date == '1/2/2007' | Date =='2/2/2007')
+subset$Date<-as.Date(subset$Date,"%d/%m/%Y")
+x<-paste(subset$Date,subset$Time)
+subset$datetime<-strptime(x,"%Y-%m-%d %H:%M:%S")
+par(mfrow=c(2,2),mar = c(6, 4, 1, 1))
+with(subset,{
+              plot(datetime,Global_active_power,type="l",ylab="Global Active Power",xlab="")
+              plot(datetime,Voltage,type="l",ylab="Voltage",xlab="datetime")
+              plot(datetime,Sub_metering_1,type="l",ylab="Energy sub metering",xlab="")
+              lines(subset$datetime,subset$Sub_metering_2,col="red")
+              lines(subset$datetime,subset$Sub_metering_3,col="blue")
+              legend("topright",bty="n",lty=c(1,1),col=c("black","red","blue"),legend=c("Sub_metering_1","Sub_metering_2","Sub_metering_3"))
+              plot(datetime,Global_reactive_power,type="l",ylab="Global_reactive_power",xlab="datetime")
+  })
+dev.copy(png,"plot4.png")
+dev.off()
